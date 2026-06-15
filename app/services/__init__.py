@@ -27,7 +27,7 @@ from .promo_service import (
 from .referral_service import add_bonus, spend_bonus, process_referral_reward
 from .favorite_service import (
     add_favorite, remove_favorite, get_user_favorites,
-    get_favorite_by_id, search_favorites,
+    get_favorite_by_id, search_favorites, update_favorite_category,
 )
 
 __all__ = [
@@ -58,5 +58,5 @@ __all__ = [
     "add_bonus", "spend_bonus", "process_referral_reward",
     # favorites
     "add_favorite", "remove_favorite", "get_user_favorites",
-    "get_favorite_by_id", "search_favorites",
+    "get_favorite_by_id", "search_favorites", "update_favorite_category",
 ]

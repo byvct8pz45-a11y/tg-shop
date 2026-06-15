@@ -182,8 +182,24 @@ def favorite_item_keyboard(fav_id: int, channel_id: int, post_id: int) -> Inline
         InlineKeyboardButton(text="🔗 Открыть пост", url=f"https://t.me/c/{channel_str}/{post_id}"),
     )
     builder.row(
+        InlineKeyboardButton(text="📂 Изменить категорию", callback_data=f"fav_setcat:{fav_id}"),
+    )
+    builder.row(
         InlineKeyboardButton(text="🗑 Удалить из избранного", callback_data=f"fav_remove:{fav_id}"),
     )
+    return builder.as_markup()
+
+
+def favorite_category_select_keyboard(fav_id: int) -> InlineKeyboardMarkup:
+    """Клавиатура выбора новой категории для записи в избранном."""
+    builder = InlineKeyboardBuilder()
+    for cat in FavoriteCategory:
+        builder.row(
+            InlineKeyboardButton(
+                text=cat.value,
+                callback_data=f"fav_cat_set:{fav_id}:{cat.name}",
+            )
+        )
     return builder.as_markup()
 
 

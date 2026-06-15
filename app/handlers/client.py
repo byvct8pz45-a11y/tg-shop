@@ -9,6 +9,7 @@ from app.keyboards import (
     main_menu_keyboard, my_orders_keyboard, review_action_keyboard,
     support_menu_keyboard, my_tickets_keyboard, ticket_reply_keyboard,
     cancel_keyboard, favorites_category_keyboard, favorite_item_keyboard,
+    favorite_category_select_keyboard,
 )
 from app.models import FavoriteCategory, OrderStatus, User
 from app.services import (
@@ -16,6 +17,7 @@ from app.services import (
     get_user_review_for_order, get_tickets_by_user, get_ticket_by_id,
     create_ticket, add_ticket_message, get_user_promos,
     get_user_favorites, get_favorite_by_id, remove_favorite, search_favorites,
+    update_favorite_category,
 )
 from app.states import SupportFSM
 from app.utils import format_order_card
@@ -214,6 +216,40 @@ async def add_to_favorites_cb(callback: CallbackQuery, session: AsyncSession, db
         await callback.answer("❤️ Добавлено в избранное!", show_alert=True)
     else:
         await callback.answer("Уже в избранном.", show_alert=True)
+
+
+@router.callback_query(F.data.startswith("fav_setcat:"))
+async def choose_fav_category(callback: CallbackQuery, db_user: User) -> None:
+    """Показать пользователю список категорий для смены."""
+    fav_id = int(callback.data.split(":")[1])
+    await callback.message.answer(
+        "📂 <b>Выберите новую категорию:</b>",
+        parse_mode="HTML",
+        reply_markup=favorite_category_select_keyboard(fav_id),
+    )
+    await callback.answer()
+
+
+@router.callback_query(F.data.startswith("fav_cat_set:"))
+async def set_fav_category(callback: CallbackQuery, session: AsyncSession, db_user: User) -> None:
+    """Сохранить выбранную категорию для записи в избранном."""
+    parts = callback.data.split(":")  # fav_cat_set:<fav_id>:<CAT_NAME>
+    fav_id = int(parts[1])
+    cat_name = parts[2]
+    try:
+        cat = FavoriteCategory[cat_name]
+    except KeyError:
+        await callback.answer("⚠️ Неизвестная категория.", show_alert=True)
+        return
+    ok = await update_favorite_category(session, fav_id, db_user.id, cat)
+    if ok:
+        await callback.answer(f"✅ Категория изменена на «{cat.value}»", show_alert=True)
+        try:
+            await callback.message.delete()
+        except Exception:
+            pass
+    else:
+        await callback.answer("⚠️ Запись не найдена.", show_alert=True)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

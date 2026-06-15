@@ -69,6 +69,24 @@ async def get_favorite_by_id(session: AsyncSession, favorite_id: int) -> Optiona
     return result.scalar_one_or_none()
 
 
+async def update_favorite_category(
+    session: AsyncSession,
+    favorite_id: int,
+    user_id: int,
+    category: FavoriteCategory,
+) -> bool:
+    """Изменить категорию записи в избранном. Возвращает True при успехе."""
+    result = await session.execute(
+        select(Favorite).where(Favorite.id == favorite_id, Favorite.user_id == user_id)
+    )
+    fav = result.scalar_one_or_none()
+    if fav is None:
+        return False
+    fav.category = category
+    await session.flush()
+    return True
+
+
 async def search_favorites(session: AsyncSession, user_id: int, query: str) -> list[Favorite]:
     result = await session.execute(
         select(Favorite).where(
