@@ -6,6 +6,7 @@ from .client import (
     pricing_response_keyboard, receipt_keyboard, receipt_admin_keyboard,
     support_menu_keyboard, my_tickets_keyboard, ticket_reply_keyboard,
     favorites_category_keyboard, favorite_item_keyboard,
+    favorite_category_select_keyboard,
     add_to_favorite_keyboard, remove_keyboard,
 )
 from .admin import (
@@ -24,6 +25,7 @@ __all__ = [
     "pricing_response_keyboard", "receipt_keyboard", "receipt_admin_keyboard",
     "support_menu_keyboard", "my_tickets_keyboard", "ticket_reply_keyboard",
     "favorites_category_keyboard", "favorite_item_keyboard",
+    "favorite_category_select_keyboard",
     "add_to_favorite_keyboard", "remove_keyboard",
     # admin
     "admin_main_keyboard", "cancel_admin_keyboard", "order_admin_keyboard",
